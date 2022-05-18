@@ -1,6 +1,25 @@
-const button = document.querySelector('#activate');
+const saveButton = document.querySelector('#saveBtn');
+const getButton = document.querySelector('#getDataBtn');
+const input = document.querySelector('#textInput');
+const label = document.querySelector('.label');
 
-button.addEventListener('click', () => {
+getButton.addEventListener('click', () => {
+    chrome.storage.sync.get((result) => console.log(result));
+
+    chrome.storage.sync.get("input", (data) => {
+        label.textContent = data.input;
+        
+    });
+})
+
+saveButton.addEventListener('click', () => {
+
+    const inputValue = input.value;
+    if(inputValue) {
+        chrome.storage.sync.set({ input: inputValue });
+        input.value = '';
+    }
+
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if(tabs[0].url.startsWith('https://www.youtube.com/watch?')) {
