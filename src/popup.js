@@ -66,7 +66,6 @@ function closeContextMenu() {
 async function getTimestamp(_tab) {
     const req = await fetch(`https://www.youtube.com/oembed?format=json&url=${_tab.url}`);
     const result = await req.json();
-    console.log(json);
 
     const channel = result.author_name;
     const title = result.title;
