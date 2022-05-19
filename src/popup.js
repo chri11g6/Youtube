@@ -56,11 +56,11 @@ function deleteVideo(id) {
             chrome.storage.sync.set({ videos: data.videos });
         }
     });
+    selectedVideo = {};
 }
 
 function closeContextMenu() {
     contextMenu.classList.remove('open');
-    selectedVideo = {};
 }
 
 function getTimestamp(_tab) {
