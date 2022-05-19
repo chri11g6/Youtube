@@ -1,5 +1,9 @@
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.sync.set({ videos: [] });
+    chrome.storage.sync.get('videos', (data) => {
+        if(!data.videos) {
+            chrome.storage.sync.set({ videos: [] });
+        } 
+    });
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {

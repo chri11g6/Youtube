@@ -1,36 +1,76 @@
+const popup = document.querySelector('#popup');
 const saveButton = document.querySelector('#saveBtn');
-const getButton = document.querySelector('#getDataBtn');
 const videos = document.querySelector('#video-collection');
+const contextMenu = document.querySelector('#contextmenu');
+const openBtn = document.querySelector('#open-btn');
+const deleteBtn = document.querySelector('#delete-btn');
 
-getButton.addEventListener('click', () => {
-    chrome.storage.sync.get((result) => console.log(result));
+let selectedVideo = {};
+
+popup.addEventListener('click', closeContextMenu);
+videos.addEventListener('scroll', closeContextMenu);
+
+openBtn.addEventListener('click', () => {
+    window.open(selectedVideo.url, '_blank');
 });
+
+deleteBtn.addEventListener('click', () => {
+    videos.querySelector(`[id='${selectedVideo.id}']`).remove();
+    closeContextMenu();
+    deleteVideo(selectedVideo.id);
+})
 
 saveButton.addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if(tabs[0].url.startsWith('https://www.youtube.com/watch?')) {
+        if (tabs[0].url.startsWith('https://www.youtube.com/watch?')) {
             chrome.scripting.executeScript({
                 target: { tabId: tabs[0].id },
                 function: getTimestamp,
-                args: [ tabs[0] ]
-            });
+                args: [tabs[0]]
+            },
+                (res) => addOrUpdateVideo(res[0].result))
         }
     });
 });
+
+function addOrUpdateVideo(video) {
+    const container = videos.querySelector(`[id='${video.id}']`);
+    if (container) {
+        const timestamp = container.querySelector('.time-stamp');
+        timestamp.textContent = formatTime(video.timestamp);
+
+        container.addEventListener('click', () => {
+            window.open(video.url, '_blank');
+        });
+    } else {
+        videos.prepend(createVideoContainer(video));
+    }
+}
+
+function deleteVideo(id) {
+    chrome.storage.sync.get("videos", (data) => {
+        const index = data.videos.findIndex(e => e.id === id);
+
+        if (index > -1) {
+            data.videos.splice(index, 1);
+            chrome.storage.sync.set({ videos: data.videos });
+        }
+    });
+}
+
+function closeContextMenu() {
+    contextMenu.classList.remove('open');
+    selectedVideo = {};
+}
 
 function getTimestamp(_tab) {
     const video = document.querySelector('.video-stream.html5-main-video');
     const title = document.querySelector('h1 .style-scope.ytd-watch-metadata').textContent;
     const channel = document.querySelector('#owner-and-teaser #channel-name a').textContent;
-    const timestamp = Math.floor(video.currentTime);    
+    const timestamp = Math.floor(video.currentTime);
     const params = new URLSearchParams(window.location.search);
     const id = params.get('v');
     params.set('t', timestamp);
-
-    // console.log('Title:', title);
-    // console.log('Url:', `https://www.youtube.com/watch?${params}s`);
-    // console.log('Img:', `https://i.ytimg.com/vi/${id}/hqdefault.jpg`);
-    // console.log('Channel', channel);
 
     const url = `https://www.youtube.com/watch?${params}s`;
     const img = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
@@ -38,14 +78,16 @@ function getTimestamp(_tab) {
     chrome.storage.sync.get("videos", (data) => {
         const index = data.videos.findIndex(e => e.id === id);
 
-        if(index === -1) {   
-            chrome.storage.sync.set({ videos: [{ id, url, img, title, timestamp, channel }, ...data.videos]});
+        if (index === -1) {
+            chrome.storage.sync.set({ videos: [{ id, url, img, title, timestamp, channel }, ...data.videos] });
         } else {
             data.videos[index].url = url;
             data.videos[index].timestamp = timestamp;
-            chrome.storage.sync.set({ videos: data.videos});
+            chrome.storage.sync.set({ videos: data.videos });
         }
     });
+
+    return { id, url, img, title, timestamp, channel };
 }
 
 function createVideoContainer(video) {
@@ -76,14 +118,33 @@ function createVideoContainer(video) {
 
     const container = document.createElement('div');
     container.className = 'video-container';
+    container.id = video.id;
     container.append(imageContainer, contentContainer);
 
-    container.addEventListener('click', () => {
+    container.addEventListener('click', (e) => {
         window.open(video.url, '_blank');
-    })
+    });
+
+    container.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        selectedVideo = video;
+        contextMenu.classList.add('open');
+
+        if ((e.clientY + contextMenu.clientHeight) > popup.clientHeight)
+            contextMenu.style.top = (e.clientY - contextMenu.clientHeight) + 'px';
+        else
+            contextMenu.style.top = e.clientY + 'px';
+
+
+        if ((e.clientX + contextMenu.clientWidth) > popup.clientWidth)
+            contextMenu.style.left = (popup.clientWidth - contextMenu.clientWidth) + 'px';
+        else
+            contextMenu.style.left = e.clientX + 'px';
+
+        return false;
+    });
 
     return container;
-
 }
 
 function formatTime(s) {
@@ -92,14 +153,14 @@ function formatTime(s) {
     const seconds = parseInt(s % 60);
 
     const formattedHours = (hours / 10 > 1) ? hours : `0${hours}`;
-    const formattedMinutes = (minutes / 10 > 1) ? minutes : `0${minutes}`;  
-    const formattedSeconds = (seconds / 10 > 1) ? seconds : `0${seconds}`; 
+    const formattedMinutes = (minutes / 10 >= 1) ? minutes : `0${minutes}`;
+    const formattedSeconds = (seconds / 10 >= 1) ? seconds : `0${seconds}`;
 
     return `${hours ? formattedHours + ':' : ''}${formattedMinutes}:${formattedSeconds}`;
 }
 
 function formatTitle(title) {
-    if(title.length > 45) {
+    if (title.length > 45) {
         title = title.slice(0, 45);
         title += '...';
     }
@@ -109,7 +170,7 @@ function formatTitle(title) {
 
 function construct() {
     chrome.storage.sync.get("videos", (data) => {
-        for(const video of data.videos) {
+        for (const video of data.videos) {
             videos.appendChild(createVideoContainer(video));
         }
     });

@@ -10,10 +10,13 @@
         <title>Youtube Timestamp Extension</title>
     </head>
     <body>
-        <div class="container">
+        <div id="contextmenu" class="contextmenu">
+            <button id="open-btn" class="context-btn">Open</button>
+            <button id="delete-btn" class="context-btn">Delete</button>
+        </div>
+        <div id="popup" class="container">
             <div class="btn-container">
                 <button id="saveBtn" class="btn">Save</button>
-                <button id="getDataBtn" class="btn">Get data</button>
             </div>
             <div id="video-collection" class="video-collection"></div>
         </div>
