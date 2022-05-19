@@ -174,8 +174,6 @@ function formatTitle(title) {
 
 function construct() {
     chrome.storage.sync.get("videos", (data) => {
-        console.log(data);
-
         for (const video of data.videos) {
             videos.appendChild(createVideoContainer(video));
         }
