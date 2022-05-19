@@ -1,12 +1,8 @@
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.get((data) => {
-        console.log(data);
-    })
-
-    chrome.storage.local.get('videos', (data) => {
+    chrome.storage.sync.get('videos', (data) => {
         if(!data.videos) {
-            chrome.storage.local.set({ videos: [] });
-        } 
+            chrome.storage.sync.set({ videos: [] });
+        }
     });
 });
 

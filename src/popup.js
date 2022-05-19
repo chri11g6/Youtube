@@ -48,12 +48,12 @@ function addOrUpdateVideo(video) {
 }
 
 function deleteVideo(id) {
-    chrome.storage.local.get("videos", (data) => {
+    chrome.storage.sync.get("videos", (data) => {
         const index = data.videos.findIndex(e => e.id === id);
 
         if (index > -1) {
             data.videos.splice(index, 1);
-            chrome.storage.local.set({ videos: data.videos });
+            chrome.storage.sync.set({ videos: data.videos });
         }
     });
     selectedVideo = {};
@@ -63,27 +63,33 @@ function closeContextMenu() {
     contextMenu.classList.remove('open');
 }
 
-function getTimestamp(_tab) {
+async function getTimestamp(_tab) {
+    const req = await fetch(`https://www.youtube.com/oembed?format=json&url=${_tab.url}`);
+    const result = await req.json();
+    console.log(json);
+
+    const channel = result.author_name;
+    const title = result.title;
+    const img = result.thumbnail_url;
+
     const video = document.querySelector('.video-stream.html5-main-video');
-    const title = document.querySelector('h1 .style-scope.ytd-watch-metadata').textContent;
-    const channel = document.querySelector('#owner-and-teaser #channel-name a').textContent;
     const timestamp = Math.floor(video.currentTime);
+    
     const params = new URLSearchParams(window.location.search);
     const id = params.get('v');
     params.set('t', timestamp);
 
     const url = `https://www.youtube.com/watch?${params}s`;
-    const img = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
-    chrome.storage.local.get("videos", (data) => {
+    chrome.storage.sync.get("videos", (data) => {
         const index = data.videos.findIndex(e => e.id === id);
 
         if (index === -1) {
-            chrome.storage.local.set({ videos: [{ id, url, img, title, timestamp, channel }, ...data.videos] });
+            chrome.storage.sync.set({ videos: [{ id, url, img, title, timestamp, channel }, ...data.videos] });
         } else {
             data.videos[index].url = url;
             data.videos[index].timestamp = timestamp;
-            chrome.storage.local.set({ videos: data.videos });
+            chrome.storage.sync.set({ videos: data.videos });
         }
     });
 
@@ -135,7 +141,6 @@ function createVideoContainer(video) {
         else
             contextMenu.style.top = e.clientY + 'px';
 
-
         if ((e.clientX + contextMenu.clientWidth) > popup.clientWidth)
             contextMenu.style.left = (popup.clientWidth - contextMenu.clientWidth) + 'px';
         else
@@ -169,7 +174,7 @@ function formatTitle(title) {
 }
 
 function construct() {
-    chrome.storage.local.get("videos", (data) => {
+    chrome.storage.sync.get("videos", (data) => {
         console.log(data);
 
         for (const video of data.videos) {
