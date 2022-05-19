@@ -48,12 +48,12 @@ function addOrUpdateVideo(video) {
 }
 
 function deleteVideo(id) {
-    chrome.storage.sync.get("videos", (data) => {
+    chrome.storage.local.get("videos", (data) => {
         const index = data.videos.findIndex(e => e.id === id);
 
         if (index > -1) {
             data.videos.splice(index, 1);
-            chrome.storage.sync.set({ videos: data.videos });
+            chrome.storage.local.set({ videos: data.videos });
         }
     });
     selectedVideo = {};
@@ -75,15 +75,15 @@ function getTimestamp(_tab) {
     const url = `https://www.youtube.com/watch?${params}s`;
     const img = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
-    chrome.storage.sync.get("videos", (data) => {
+    chrome.storage.local.get("videos", (data) => {
         const index = data.videos.findIndex(e => e.id === id);
 
         if (index === -1) {
-            chrome.storage.sync.set({ videos: [{ id, url, img, title, timestamp, channel }, ...data.videos] });
+            chrome.storage.local.set({ videos: [{ id, url, img, title, timestamp, channel }, ...data.videos] });
         } else {
             data.videos[index].url = url;
             data.videos[index].timestamp = timestamp;
-            chrome.storage.sync.set({ videos: data.videos });
+            chrome.storage.local.set({ videos: data.videos });
         }
     });
 
@@ -169,7 +169,9 @@ function formatTitle(title) {
 }
 
 function construct() {
-    chrome.storage.sync.get("videos", (data) => {
+    chrome.storage.local.get("videos", (data) => {
+        console.log(data);
+
         for (const video of data.videos) {
             videos.appendChild(createVideoContainer(video));
         }
