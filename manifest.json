@@ -28,7 +28,8 @@
         "tabs"
     ],
     "host_permissions": [
-        "http://*/*",
-        "https://*/*"
+        "http://www.youtube.com/*",
+        "https://www.youtube.com/*",
+        "https://i.ytimg.com/*"
     ]
 }
