@@ -1,24 +1,10 @@
 const popup = document.querySelector('#popup');
 const saveButton = document.querySelector('#saveBtn');
 const videos = document.querySelector('#video-collection');
-const contextMenu = document.querySelector('#contextmenu');
-const openBtn = document.querySelector('#open-btn');
-const deleteBtn = document.querySelector('#delete-btn');
 
-let selectedVideo = {};
+let selectedVideoContainer = null;
 
-popup.addEventListener('click', closeContextMenu);
-videos.addEventListener('scroll', closeContextMenu);
-
-openBtn.addEventListener('click', () => {
-    window.open(selectedVideo.url, '_blank');
-});
-
-deleteBtn.addEventListener('click', () => {
-    videos.querySelector(`[id='${selectedVideo.id}']`).remove();
-    closeContextMenu();
-    deleteVideo(selectedVideo.id);
-})
+popup.addEventListener('click', hideDeleteButton);
 
 saveButton.addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -52,15 +38,21 @@ function deleteVideo(id) {
         const index = data.videos.findIndex(e => e.id === id);
 
         if (index > -1) {
+            selectedVideoContainer.classList.add('fade-out');
+            setTimeout(() => {
+                selectedVideoContainer.remove();
+            }, 500);
+
             data.videos.splice(index, 1);
             chrome.storage.sync.set({ videos: data.videos });
         }
     });
-    selectedVideo = {};
 }
 
-function closeContextMenu() {
-    contextMenu.classList.remove('open');
+function hideDeleteButton() {
+    if (selectedVideoContainer) {
+        selectedVideoContainer.classList.remove('delete-btn-active');
+    }
 }
 
 async function getTimestamp(_tab) {
@@ -121,10 +113,24 @@ function createVideoContainer(video) {
     contentContainer.className = 'content-container';
     contentContainer.append(header, channel);
 
+    const trashIcon = document.createElement('img');
+    trashIcon.src = '../images/trash.png';
+    trashIcon.alt = 'Trashbin';
+    trashIcon.className = 'delete-icon';
+
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'delete-btn';
+    deleteButton.appendChild(trashIcon);
+
+    deleteButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteVideo(video.id);
+    });
+
     const container = document.createElement('div');
     container.className = 'video-container';
     container.id = video.id;
-    container.append(imageContainer, contentContainer);
+    container.append(imageContainer, contentContainer, deleteButton);
 
     container.addEventListener('click', () => {
         window.open(video.url, '_blank');
@@ -132,19 +138,15 @@ function createVideoContainer(video) {
 
     container.addEventListener('contextmenu', (e) => {
         e.preventDefault();
-        selectedVideo = video;
-        contextMenu.classList.add('open');
+        hideDeleteButton();
 
-        if ((e.clientY + contextMenu.clientHeight) > popup.clientHeight)
-            contextMenu.style.top = (e.clientY - contextMenu.clientHeight) + 'px';
-        else
-            contextMenu.style.top = e.clientY + 'px';
-
-        if ((e.clientX + contextMenu.clientWidth) > popup.clientWidth)
-            contextMenu.style.left = (popup.clientWidth - contextMenu.clientWidth) + 'px';
-        else
-            contextMenu.style.left = e.clientX + 'px';
-
+        if(container !== selectedVideoContainer) {
+            container.classList.add('delete-btn-active');
+            selectedVideoContainer = container; 
+        } else {
+            selectedVideoContainer = null;
+        }
+        
         return false;
     });
 
