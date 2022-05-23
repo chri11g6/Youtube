@@ -1,6 +1,6 @@
 {
-    "name": "Youtube Timestamps",
-    "description": "Save your youtube timestamps",
+    "name": "Youtube Timestamp",
+    "description": "Save youtube videos with exact timestamps for later.",
     "version": "1.0",
     "manifest_version": 3,
     "background": {
@@ -23,13 +23,11 @@
     },
     "permissions": [
         "storage",
-        "activeTab",
         "scripting",
         "tabs"
     ],
     "host_permissions": [
         "http://www.youtube.com/*",
-        "https://www.youtube.com/*",
-        "https://i.ytimg.com/*"
+        "https://www.youtube.com/*"
     ]
 }

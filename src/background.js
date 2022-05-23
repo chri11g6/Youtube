@@ -6,20 +6,21 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    
-    if (changeInfo.status === 'complete' && tab.url.startsWith('https://www.youtube.com/watch?')) {
-        chrome.scripting.executeScript({
-            target: { tabId: tabId },
-            function: keyPressed,
-        });
-    }
-});
+// TODO - Shortcut to save a video.
 
-function keyPressed() {
-    document.addEventListener('keypress', (e) => {
-        if (e.code === 'KeyB') {
-            console.log("Time to save!!!");
-        }
-    });
-}
+// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+//     if (changeInfo.status === 'complete' && tab.url.startsWith('https://www.youtube.com/watch?')) {
+//         chrome.scripting.executeScript({
+//             target: { tabId: tabId },
+//             function: keyPressed,
+//         });
+//     }
+// });
+
+// function keyPressed() {
+//     document.addEventListener('keypress', (e) => {
+//         if (e.code === 'KeyB') {
+//             console.log("Time to save!!!");
+//         }
+//     });
+// }
