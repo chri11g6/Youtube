@@ -126,7 +126,7 @@ function createVideoContainer(video) {
     container.id = video.id;
     container.append(imageContainer, contentContainer);
 
-    container.addEventListener('click', (e) => {
+    container.addEventListener('click', () => {
         window.open(video.url, '_blank');
     });
 
