@@ -17,7 +17,19 @@
         <div id="popup" class="container">
             <div class="btn-container">
                 <button id="saveBtn" class="btn">Save</button>
+                <button id="newFolderBtn" class="btn btn-secondary">New Folder</button>
             </div>
+
+            <div class="folder-container">
+                <div id="create-folder-container">
+                    <input type="text" id="addFolderInput" placeholder="Folder Name">
+                    <button id="addFolderBtn" class="btn">Add</button>
+                </div>
+                <div id="folder-collection">
+                    <div id="main-folder" class="folder active main-folder">All</div>
+                </div>
+            </div>
+
             <div id="video-collection" class="video-collection"></div>
         </div>
     </body>

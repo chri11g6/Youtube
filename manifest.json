@@ -1,7 +1,7 @@
 {
     "name": "Youtube Timestamp",
     "description": "Save youtube videos with exact timestamps for later.",
-    "version": "1.0",
+    "version": "1.1",
     "manifest_version": 3,
     "background": {
         "service_worker": "./src/background.js"

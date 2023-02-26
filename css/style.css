@@ -46,12 +46,14 @@ html {
 }
 
 .btn-container {
+    position: relative;
     width: 100%;
-    padding: 20px;
+    padding: 15px 20px;
     display: flex;
     gap: 20px;
     justify-content: space-between;
     background-color: #339af0;
+    z-index: 1000;
 }
 
 .video-collection {
@@ -84,6 +86,14 @@ html {
     background-color: #ebf5fe;
 }
 
+.content-container {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
 .img-container {
     height: 100%;
     position: relative;
@@ -108,28 +118,46 @@ html {
 
 .header-1 {
     font-size: 14px;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .channel {
+    font-size: 12px;
     display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.video-folder {
+    width: fit-content;
+    background: #0a1f30;
+    color: #fff;
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-size: 11px;
+    text-align: center;
 }
 
 .delete-btn {
-    position: absolute; height: 100%;
+    position: absolute;
+    height: 100%;
     width: 60px;
-    top: 0; 
+    top: 0;
     right: 0;
     border: none;
     outline: none;
     background-color: #fa5252;
-    
+
     display: flex;
     align-items: center;
     justify-content: center;
     transform: translateX(100%);
-    
+
     transition: background-color 0.2s;
     transition: transform 0.4s;
 }
@@ -153,7 +181,7 @@ html {
     padding: 0;
 }
 
-/* -------------------- TEST -------------------- */
+/* -------------------- BUTTONS -------------------- */
 
 .btn {
     width: 100%;
@@ -176,4 +204,134 @@ html {
 
 .btn:active {
     background-color: #0f2e48;
+}
+
+.btn-secondary {
+    background-color: #4e4e4e !important;
+}
+
+.btn-secondary:hover {
+    background-color: #353535 !important;
+}
+
+#newFolderBtn.active {
+    background-color: #fcc419 !important;
+    color: #000;
+}
+
+#newFolderBtn.active:hover {
+    background-color: #f59f00 !important;
+}
+
+/* -------------------- FOLDERS CONTAINER -------------------- */
+.folder-container {
+    border: 1px solid rgba(0, 0, 0, 0.7);
+    border-left: none;
+    border-right: none;
+    position: relative;
+}
+
+/* -------------------- FOLDERS COLLECTION -------------------- */
+#folder-collection {
+    position: relative;
+    padding: 8px 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    overflow-x: auto;
+    z-index: 500;
+    background-color: #fff;
+}
+
+.folder {
+    flex: 0 0 50px;
+    background-color: rgb(212, 212, 212);
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 1000px;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.folder:hover {
+    background-color: rgb(165, 165, 165);
+    cursor: pointer;
+}
+
+.folder.active {
+    color: #fff;
+    background-color: #0a1f30;
+}
+
+.folder.delete {
+    background-color: #fa5252;
+    color: #000;
+}
+
+/* -------------------- NEW FOLDER CONTAINER -------------------- */
+#create-folder-container {
+    position: absolute;
+    z-index: 600;
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    padding: 5px;
+
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    transform: translateY(-100%);
+}
+
+#create-folder-container.show {
+    transform: translateY(0);
+}
+
+#create-folder-container > * {
+    max-height: 35px !important;
+}
+
+#addFolderInput {
+    width: 100%;
+    padding: 5px;
+    font-size: 18px;
+}
+
+#addFolderInput:focus {
+    outline: none;
+}
+
+#addFolderBtn {
+    background-color: rgb(1, 94, 1);
+    width: 80px;
+}
+
+#addFolderBtn:hover {
+    background-color: rgb(2, 131, 2);
+    width: 80px;
+}
+
+.error {
+    border-color: #e90707;
+}
+
+/* -------------------- SCROLLBAR -------------------- */
+
+#folder-collection::-webkit-scrollbar {
+    height: 10px;
+}
+
+#folder-collection::-webkit-scrollbar-track {
+    background: #eeeeee;
+}
+
+#folder-collection::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+#folder-collection::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
 }
