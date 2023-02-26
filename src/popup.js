@@ -359,18 +359,6 @@ const readStorageAsync = async (key) => {
     });
 };
 
-/**
- * @deprecated Since version 1.0. Will be deleted in version 3.0. Use bar instead.
- */
-function formatTitle(title) {
-    if (title.length > 45) {
-        title = title.slice(0, 45);
-        title += '...';
-    }
-
-    return title;
-}
-
 function formatTime(s) {
     const hours = parseInt(s / 3600);
     const minutes = parseInt(s % 3600 / 60);
