@@ -4,6 +4,12 @@ chrome.runtime.onInstalled.addListener(() => {
             chrome.storage.sync.set({ videos: [] });
         }
     });
+
+    chrome.storage.sync.get('folders', (data) => {
+        if(!data.folders) {
+            chrome.storage.sync.set({ folders: [] });
+        }
+    });
 });
 
 // TODO - Shortcut to save a video.
