@@ -313,7 +313,7 @@ function constructVideos(folder = null) {
 
 function fillFolders() {
     chrome.storage.sync.get('folders', (data) => {
-        data.folders.forEach(e => {
+        data.folders?.forEach(e => {
             appendFolder(e);
         });
     });
