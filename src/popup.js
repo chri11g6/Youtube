@@ -301,6 +301,7 @@ function constructVideos(folder = null) {
     empty(videosContainer);
 
     chrome.storage.sync.get('videos', (data) => {
+        console.log(data);
         if (folder !== null) {
             data.videos = data.videos.filter(e => e.folder === folder);
         }
